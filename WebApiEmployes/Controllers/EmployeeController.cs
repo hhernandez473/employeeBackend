@@ -56,5 +56,33 @@ namespace WebApiEmployes.Controllers
             await context.SaveChangesAsync();
             return Ok();
         }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id, EmployeeCreateDTO employeeDTO)
+        {
+           
+            var employeeDB = await context.Employee.FirstOrDefaultAsync(d => d.Id == id);
+            if (employeeDB == null)
+            {
+                return NotFound();
+            }
+
+            employeeDB = mapper.Map(employeeDTO, employeeDB);
+            await context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var exist = await context.Employee.AnyAsync(d => d.Id == id);
+            if (!exist)
+            {
+                return NotFound();
+            }
+            context.Remove(new Employee() { Id = id });
+            await context.SaveChangesAsync();
+            return NoContent();
+        }
     }
 }
